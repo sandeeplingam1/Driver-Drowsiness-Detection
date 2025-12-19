@@ -1,0 +1,17 @@
+# Pre-commit configuration to enforce professional standards locally
+repos:
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.2.1
+    hooks:
+    -   id: ruff
+        args: [ --fix, --exit-non-zero-on-fix ]
+    -   id: ruff-format
+
+-   repo: local
+    hooks:
+    -   id: local-tests
+        name: run-local-tests
+        entry: python3 -m unittest discover tests
+        language: system
+        pass_filenames: false
+        always_run: true

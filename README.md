@@ -43,6 +43,11 @@ Standard Installation
    ```bash
    pip install -r requirements.txt
    ```
+3. (Recommended) Install pre-commit hooks:
+   ```bash
+   pip install pre-commit
+   pre-commit install
+   ```
 
 Docker Deployment (Recommended for Portability)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
