@@ -39,13 +39,37 @@ Installation
 3. (Optional) Add your own alarm sound:
    Place a file named `alarm.wav` in the `assets/` directory.
 
-Usage
------
+Usage and Operation Guide
+-------------------------
 
-Run the Streamlit application:
+Running the System
+~~~~~~~~~~~~~~~~~~
+To initiate the detection dashboard, execute the following command in your terminal:
+
 ```bash
 streamlit run app.py
 ```
+
+System Configuration
+~~~~~~~~~~~~~~~~~~~~
+Upon launching the dashboard, the following parameters can be adjusted via the sidebar:
+
+1. **EAR Threshold**: Sets the sensitivity for eye-closure detection. 
+   - Increase this if the system fails to detect eye closure.
+   - Decrease this if the system triggers false alarms during normal blinking.
+
+2. **MAR Threshold**: Sets the sensitivity for yawn detection.
+   - Adjust based on individual facial geometry and camera distance.
+
+Operational Best Practices
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+- **Lighting**: Ensure the face is well-illuminated. Avoid strong backlighting which can obscure facial features.
+- **Camera Position**: For optimal results, position the camera at eye level, directly in front of the operator.
+- **Hardware Access**: The application requires browser-level permission to access the system webcam. Ensure these permissions are granted when prompted.
+
+Visual Telemetry
+~~~~~~~~~~~~~~~~
+The dashboard provides a real-time Plotly graph showing temporal trends for EAR and MAR. This allows for objective monitoring of alertness levels over the duration of the session.
 
 How it Works
 ------------
