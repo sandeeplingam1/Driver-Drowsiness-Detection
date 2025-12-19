@@ -1,6 +1,8 @@
-import pygame
-import time
-import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class AlertSystem:
     def __init__(self, alarm_path):
@@ -13,7 +15,7 @@ class AlertSystem:
             self.sound = pygame.mixer.Sound(alarm_path)
         else:
             self.sound = None
-            print(f"Warning: Alarm file not found at {alarm_path}")
+            logger.warning(f"Alarm file not found at {alarm_path}")
 
     def play_alarm(self):
         current_time = time.time()
