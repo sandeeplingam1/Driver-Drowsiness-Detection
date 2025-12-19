@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.streamlit/
+venv/
+env/
+.env
+*.wav
+*.mp3
+image.jpg
+haar\ cascade\ files/
+models/
