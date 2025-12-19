@@ -25,8 +25,10 @@ if 'scoring' not in st.session_state:
 st.sidebar.header("Settings")
 ear_thresh = st.sidebar.slider("EAR Threshold (Blink/Closed)", 0.1, 0.4, 0.25)
 mar_thresh = st.sidebar.slider("MAR Threshold (Yawn)", 0.3, 1.0, 0.6)
+pitch_thresh = st.sidebar.slider("Pitch Threshold (Head Slump)", 0.4, 0.7, 0.55)
 st.session_state.scoring.ear_threshold = ear_thresh
 st.session_state.scoring.mar_threshold = mar_thresh
+st.session_state.scoring.pitch_threshold = pitch_thresh
 
 # Layout
 col1, col2 = st.columns([2, 1])
@@ -41,10 +43,12 @@ with col2:
     chart_placeholder = st.empty()
     ear_stat = st.empty()
     mar_stat = st.empty()
+    pitch_stat = st.empty()
 
 # Data for charts
 ear_history = []
 mar_history = []
+pitch_history = []
 
 cap = cv2.VideoCapture(0)
 
@@ -57,25 +61,31 @@ while not stop:
         break
     
     frame = cv2.flip(frame, 1)
-    ear, mar, landmarks = st.session_state.detector.process_frame(frame)
+    ear, mar, pitch, landmarks = st.session_state.detector.process_frame(frame)
     
     if ear is not None:
-        is_drowsy, is_yawning, d_counter, y_counter = st.session_state.scoring.update(ear, mar)
+        is_drowsy, is_yawning, is_head_slumped = st.session_state.scoring.update(ear, mar, pitch)
         
-        # Display EAR and MAR history
+        # Display histories
         ear_history.append(ear)
         mar_history.append(mar)
+        pitch_history.append(pitch)
         if len(ear_history) > 50:
             ear_history.pop(0)
             mar_history.pop(0)
+            pitch_history.pop(0)
             
         # UI Updates
         ear_stat.metric("Eye Aspect Ratio (EAR)", f"{ear:.2f}", delta=f"{ear - 0.25:.2f}", delta_color="inverse")
         mar_stat.metric("Mouth Aspect Ratio (MAR)", f"{mar:.2f}", delta=f"{mar - 0.6:.2f}")
+        pitch_stat.metric("Head Pitch (Slump)", f"{pitch:.2f}", delta=f"{pitch - 0.55:.2f}", delta_color="inverse")
 
         # Status logic
         if is_drowsy:
             status_placeholder.error("CRITICAL: Drowsiness Detected")
+            st.session_state.alert_system.play_alarm()
+        elif is_head_slumped:
+            status_placeholder.error("CRITICAL: Head Slump Detected")
             st.session_state.alert_system.play_alarm()
         elif is_yawning:
             status_placeholder.warning("Warning: Signs of Fatigue Detected (Yawning)")
@@ -83,14 +93,12 @@ while not stop:
         else:
             status_placeholder.success("Operator Status: Awake and Alert")
 
-        # Visualization on frame
-        # (Optional: Draw landmarks or bounding boxes here using cv2)
-        
         # Plotly chart
         fig = go.Figure()
         fig.add_trace(go.Scatter(y=ear_history, name="EAR", line=dict(color='blue')))
         fig.add_trace(go.Scatter(y=mar_history, name="MAR", line=dict(color='red')))
-        fig.update_layout(height=300, margin=dict(l=0, r=0, t=0, b=0))
+        fig.add_trace(go.Scatter(y=pitch_history, name="Pitch", line=dict(color='green')))
+        fig.update_layout(height=400, margin=dict(l=0, r=0, t=0, b=0))
         chart_placeholder.plotly_chart(fig, use_container_width=True)
 
     FRAME_WINDOW.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))

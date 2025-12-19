@@ -6,13 +6,15 @@ A modernized, high-performance driver drowsiness detection system using **MediaP
 
 Features
 --------
-- **Accurate Tracking**: Uses MediaPipe Face Mesh for sub-pixel eye and mouth tracking.
+- **Accurate Tracking**: Uses MediaPipe Face Mesh for sub-pixel ocular and oral tracking.
 - **Robust Metrics**:
-    - **EAR (Eye Aspect Ratio)** for blink and sleep detection.
-    - **MAR (Mouth Aspect Ratio)** for yawn detection.
-- **Real-time Dashboard**: Interactive Streamlit UI with live metrics and historical plots.
-- **Scoring System**: Intelligent scoring to reduce false positives.
-- **Audio Alerts**: Audible alarms when critical fatigue levels are detected.
+    - **EAR (Eye Aspect Ratio)**: For optimized blink and sustained closure detection.
+    - **MAR (Mouth Aspect Ratio)**: For early-onset fatigue detection via yawning analysis.
+    - **Head Pitch Estimation**: Detects "head slumping" forward, a critical indicator of deep sleep.
+- **Enterprise-Grade Architecture**: Modular Python structure with comprehensive docstrings.
+- **Real-time Dashboard**: Streamlit interface with live telemetry and historical trend analysis.
+- **Containerized**: Full Docker support for platform-agnostic deployment.
+- **Verified**: Integrated unit test suite for algorithmic validation.
 
 Tech Stack
 ----------
@@ -21,62 +23,64 @@ Tech Stack
 - **UI**: Streamlit, Plotly
 - **Math**: NumPy, SciPy
 - **Audio**: Pygame
+- **Testing**: Unittest
+- **Deployment**: Docker
 
-Installation
-------------
+Installation and Deployment
+---------------------------
 
+Standard Installation
+~~~~~~~~~~~~~~~~~~~~~
 1. Clone the repository:
    ```bash
    git clone https://github.com/sandeeplingam1/Driver-Drowsiness-Detection
    cd Driver-Drowsiness-Detection
    ```
-
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. (Optional) Add your own alarm sound:
-   Place a file named `alarm.wav` in the `assets/` directory.
+Docker Deployment (Recommended for Portability)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+To run the system in a containerized environment:
+```bash
+docker build -t drowsiness-detection .
+docker run -p 8501:8501 --device /dev/video0:/dev/video0 drowsiness-detection
+```
 
 Usage and Operation Guide
 -------------------------
 
 Running the System
 ~~~~~~~~~~~~~~~~~~
-To initiate the detection dashboard, execute the following command in your terminal:
-
+To initiate the detection dashboard, execute:
 ```bash
 streamlit run app.py
 ```
 
 System Configuration
 ~~~~~~~~~~~~~~~~~~~~
-Upon launching the dashboard, the following parameters can be adjusted via the sidebar:
+Parameters accessible via the sidebar telemetry control:
+1. **EAR Threshold**: Sensitivity for ocular closure.
+2. **MAR Threshold**: Sensitivity for yawning analysis.
+3. **Pitch Threshold**: Sensitivity for head-slump detection.
 
-1. **EAR Threshold**: Sets the sensitivity for eye-closure detection. 
-   - Increase this if the system fails to detect eye closure.
-   - Decrease this if the system triggers false alarms during normal blinking.
-
-2. **MAR Threshold**: Sets the sensitivity for yawn detection.
-   - Adjust based on individual facial geometry and camera distance.
-
-Operational Best Practices
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-- **Lighting**: Ensure the face is well-illuminated. Avoid strong backlighting which can obscure facial features.
-- **Camera Position**: For optimal results, position the camera at eye level, directly in front of the operator.
-- **Hardware Access**: The application requires browser-level permission to access the system webcam. Ensure these permissions are granted when prompted.
-
-Visual Telemetry
-~~~~~~~~~~~~~~~~
-The dashboard provides a real-time Plotly graph showing temporal trends for EAR and MAR. This allows for objective monitoring of alertness levels over the duration of the session.
+Automated Validation
+--------------------
+To run the internal logic tests:
+```bash
+python3 -m unittest discover tests
+```
 
 How it Works
 ------------
-The system calculates the **Eye Aspect Ratio (EAR)** and **Mouth Aspect Ratio (MAR)**. 
-- If the EAR falls below a certain threshold for a sustained period, it triggers a "Drowsy" alert.
-- If the MAR exceeds a threshold, it triggers a "Yawn" warning.
-- A scoring system increments during fatiguing behavior and decrements during normal behavior to ensure reliability.
+The system orchestrates three primary volumetric metrics:
+- **EAR**: Measures eye aperture.
+- **MAR**: Measures oral expansion.
+- **Pitch**: Measures vertical head orientation.
+
+A temporal scoring system monitors these metrics; if thresholds are breached for a configurable duration, the system dispatches visual and audible alerts to the operator.
 
 License
 -------
